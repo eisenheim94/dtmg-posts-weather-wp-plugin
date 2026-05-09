@@ -46,7 +46,15 @@ final class PostsWeatherBlock {
 	public function register(): void {
 		add_action( 'init', [ $this, 'register_block' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_fonts' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor_fonts' ] );
+		/*
+		 * `enqueue_block_assets` (vs. `enqueue_block_editor_assets`) is the
+		 * hook that fires INSIDE the editor iframe. Modern Gutenberg renders
+		 * block previews in an iframe, and stylesheets attached only to the
+		 * parent admin frame don't reach the iframe content. We gate on
+		 * is_admin() so the front-end branch is left to the lazy render_block
+		 * attach below.
+		 */
+		add_action( 'enqueue_block_assets', [ $this, 'enqueue_editor_fonts' ] );
 		add_filter( 'render_block', [ $this, 'attach_fonts_on_render' ], 10, 2 );
 	}
 
@@ -77,9 +85,15 @@ final class PostsWeatherBlock {
 	}
 
 	/**
-	 * Editor preview: load the same assets so the SSR preview matches the front-end.
+	 * Editor preview: load Google Fonts + Lucide inside the editor iframe so
+	 * the ServerSideRender output looks identical to the front-end. Gated on
+	 * is_admin() because `enqueue_block_assets` also fires on the front-end,
+	 * where {@see attach_fonts_on_render()} handles lazy loading instead.
 	 */
 	public function enqueue_editor_fonts(): void {
+		if ( ! is_admin() ) {
+			return;
+		}
 		$this->register_fonts();
 		wp_enqueue_style( self::FONTS_HANDLE );
 		wp_enqueue_style( self::LUCIDE_HANDLE );

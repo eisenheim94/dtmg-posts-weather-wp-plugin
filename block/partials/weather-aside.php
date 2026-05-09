@@ -16,7 +16,7 @@ declare( strict_types=1 );
 defined( 'ABSPATH' ) || exit;
 
 $f = wp_parse_args(
-	$weather_fields,
+	is_array( $weather_fields ) ? $weather_fields : ( is_object( $weather_fields ) ? get_object_vars( $weather_fields ) : [] ),
 	[
 		'location'  => true,
 		'temp'      => true,
@@ -29,6 +29,23 @@ $f = wp_parse_args(
 		'sunset'    => true,
 	]
 );
+
+/*
+ * Coerce every flag to a strict boolean. The REST → JSON → query-string round
+ * trip used by `<ServerSideRender>` in the editor can produce values like the
+ * string "false" — which is truthy in PHP and would silently re-enable a
+ * toggled-off field. Accept the common falsy spellings explicitly.
+ */
+foreach ( $f as $key => $value ) {
+	if ( is_bool( $value ) ) {
+		continue;
+	}
+	if ( is_string( $value ) ) {
+		$f[ $key ] = ! in_array( strtolower( trim( $value ) ), [ '', '0', 'false', 'no', 'off' ], true );
+	} else {
+		$f[ $key ] = (bool) $value;
+	}
+}
 
 $tz          = wp_timezone();
 $rise        = ( new \DateTimeImmutable( '@' . $weather->sunrise ) )->setTimezone( $tz );

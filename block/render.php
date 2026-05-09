@@ -28,10 +28,27 @@ defined( 'ABSPATH' ) || exit;
 
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- The closure builds a fully-escaped HTML string; partials handle escaping at the call site.
 echo ( static function ( array $attributes ): string {
-	$post_ids       = isset( $attributes['postIds'] ) && is_array( $attributes['postIds'] ) ? array_map( 'intval', $attributes['postIds'] ) : [];
-	$latitude       = isset( $attributes['latitude'] ) && is_numeric( $attributes['latitude'] ) ? (float) $attributes['latitude'] : null;
-	$longitude      = isset( $attributes['longitude'] ) && is_numeric( $attributes['longitude'] ) ? (float) $attributes['longitude'] : null;
-	$weather_fields = isset( $attributes['weatherFields'] ) && is_array( $attributes['weatherFields'] ) ? $attributes['weatherFields'] : [];
+	$post_ids  = isset( $attributes['postIds'] ) && is_array( $attributes['postIds'] ) ? array_map( 'intval', $attributes['postIds'] ) : [];
+	$latitude  = isset( $attributes['latitude'] ) && is_numeric( $attributes['latitude'] ) ? (float) $attributes['latitude'] : null;
+	$longitude = isset( $attributes['longitude'] ) && is_numeric( $attributes['longitude'] ) ? (float) $attributes['longitude'] : null;
+
+	/*
+	 * `weatherFields` arrives as an array on the front-end (block-comment JSON
+	 * parsed with assoc=true), but the block-renderer REST path used by the
+	 * editor's ServerSideRender can hand us a stdClass instead. Normalise both
+	 * shapes to an associative array so the partial sees the same data either
+	 * way; otherwise an unrecognised shape collapsed to `[]`, wp_parse_args
+	 * filled in all-true defaults, and the toggles silently had no effect.
+	 */
+	$weather_fields = [];
+	if ( isset( $attributes['weatherFields'] ) ) {
+		$raw = $attributes['weatherFields'];
+		if ( is_array( $raw ) ) {
+			$weather_fields = $raw;
+		} elseif ( is_object( $raw ) ) {
+			$weather_fields = get_object_vars( $raw );
+		}
+	}
 
 	/* Resolve at most two valid posts in the order the user picked them. */
 	$resolved_posts = [];
