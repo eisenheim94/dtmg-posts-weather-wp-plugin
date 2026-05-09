@@ -98,6 +98,30 @@ npm run lint:css              # @wordpress/stylelint-config
 npm run format                # prettier-style format pass for editor JS/SCSS
 ```
 
+## Releases
+
+```bash
+npm run release:zip
+```
+
+Produces `dist/dtmg-posts-weather-block-<version>.zip`, ready to upload via *Plugins → Add New → Upload Plugin* on any WordPress site, or to attach to a GitHub Release. The version is read from the `Version:` field of the plugin header file, so update it there only.
+
+Internally the script (`bin/release.sh`):
+
+1. Rebuilds `vendor/` with `composer install --no-dev --optimize-autoloader` (strips PHPCS / PHPCompatibility, builds a classmap autoloader).
+2. Reinstalls `node_modules/` deterministically with `npm ci`.
+3. Runs `npm run build` to compile `block/` → `build/`.
+4. Stages the runtime payload under `dist/dtmg-posts-weather-block/` with explicit excludes (no `node_modules/`, no `block/` source, no `package.json`, no `composer.lock`, no editor configs).
+5. Zips with the slug folder as the archive root — required by WordPress's "Upload Plugin" extractor, which uses the inner directory name as the installed plugin's path.
+6. Restores `vendor/` to its dev state so PHPCS continues to work locally afterwards.
+
+To attach the zip to a GitHub Release:
+
+```bash
+gh release create v1.0.0 dist/dtmg-posts-weather-block-1.0.0.zip \
+    --title "v1.0.0" --notes "Initial public release."
+```
+
 `phpcs.xml.dist` excludes `WordPress.Files.FileName.NotHyphenatedLowercase` for `src/` because PSR-4 mandates PascalCase filenames; it also excludes the short-array-syntax rule because the plugin targets PHP 8.1+. All other WPCS rules are enforced.
 
 ## Limitations / what was deliberately not done

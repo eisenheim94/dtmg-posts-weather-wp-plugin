@@ -5,6 +5,9 @@
 # Build output
 /build/
 
+# Release artefacts (produced by bin/release.sh)
+/dist/
+
 # Compiled translations
 /languages/*.mo
 

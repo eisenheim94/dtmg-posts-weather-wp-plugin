@@ -5,11 +5,12 @@
     "private": true,
     "license": "GPL-2.0-or-later",
     "scripts": {
-        "start":    "wp-scripts start --webpack-src-dir=block --output-path=build",
-        "build":    "wp-scripts build --webpack-src-dir=block --output-path=build",
-        "format":   "wp-scripts format block",
-        "lint:js":  "wp-scripts lint-js block",
-        "lint:css": "wp-scripts lint-style block/**/*.scss"
+        "start":       "wp-scripts start --webpack-src-dir=block --output-path=build",
+        "build":       "wp-scripts build --webpack-src-dir=block --output-path=build",
+        "format":      "wp-scripts format block",
+        "lint:js":     "wp-scripts lint-js block",
+        "lint:css":    "wp-scripts lint-style block/**/*.scss",
+        "release:zip": "bash bin/release.sh"
     },
     "devDependencies": {
         "@wordpress/scripts": "^30.0.0"
