@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
+	SelectControl,
 	ToggleControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- NumberControl is the only stable spinner-style numeric input; downgrade to TextControl loses spin buttons.
 	__experimentalNumberControl as NumberControl,
@@ -21,7 +22,13 @@ const FIELD_LABELS = {
 };
 
 export default function WeatherInspector( { attributes, setAttributes } ) {
-	const { postIds, latitude, longitude, weatherFields } = attributes;
+	const { postIds, latitude, longitude, units, timeFormat, weatherFields } =
+		attributes;
+	// Defensive default: an older saved post may predate the units attribute.
+	const currentUnits = units === 'imperial' ? 'imperial' : 'metric';
+	// Same idea for timeFormat: legacy posts collapse to 'auto'.
+	const currentTimeFormat =
+		timeFormat === '12' || timeFormat === '24' ? timeFormat : 'auto';
 
 	const setPostId = ( index, id ) => {
 		const next = [ ...postIds ];
@@ -104,6 +111,81 @@ export default function WeatherInspector( { attributes, setAttributes } ) {
 						) }
 					</p>
 				) }
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Display', 'dtmg-posts-weather-block' ) }
+				initialOpen
+			>
+				<SelectControl
+					label={ __( 'Units', 'dtmg-posts-weather-block' ) }
+					value={ currentUnits }
+					options={ [
+						{
+							label: __(
+								'Metric (°C, m/s)',
+								'dtmg-posts-weather-block'
+							),
+							value: 'metric',
+						},
+						{
+							label: __(
+								'Imperial (°F, mph)',
+								'dtmg-posts-weather-block'
+							),
+							value: 'imperial',
+						},
+					] }
+					onChange={ ( v ) =>
+						setAttributes( {
+							units: v === 'imperial' ? 'imperial' : 'metric',
+						} )
+					}
+					help={ __(
+						'Conversion happens at render time; cached weather data stays metric.',
+						'dtmg-posts-weather-block'
+					) }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+				/>
+
+				<SelectControl
+					label={ __( 'Time format', 'dtmg-posts-weather-block' ) }
+					value={ currentTimeFormat }
+					options={ [
+						{
+							label: __(
+								'Automatic — visitor’s locale',
+								'dtmg-posts-weather-block'
+							),
+							value: 'auto',
+						},
+						{
+							label: __(
+								'12-hour (1:30 PM)',
+								'dtmg-posts-weather-block'
+							),
+							value: '12',
+						},
+						{
+							label: __(
+								'24-hour (13:30)',
+								'dtmg-posts-weather-block'
+							),
+							value: '24',
+						},
+					] }
+					onChange={ ( v ) => {
+						const next = v === '12' || v === '24' ? v : 'auto';
+						setAttributes( { timeFormat: next } );
+					} }
+					help={ __(
+						'Applies to sunrise and sunset. Automatic uses each visitor’s browser locale; an explicit choice is server-rendered for everyone.',
+						'dtmg-posts-weather-block'
+					) }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+				/>
 			</PanelBody>
 
 			<PanelBody

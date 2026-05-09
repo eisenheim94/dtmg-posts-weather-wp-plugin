@@ -31,6 +31,12 @@ echo ( static function ( array $attributes ): string {
 	$post_ids  = isset( $attributes['postIds'] ) && is_array( $attributes['postIds'] ) ? array_map( 'intval', $attributes['postIds'] ) : [];
 	$latitude  = isset( $attributes['latitude'] ) && is_numeric( $attributes['latitude'] ) ? (float) $attributes['latitude'] : null;
 	$longitude = isset( $attributes['longitude'] ) && is_numeric( $attributes['longitude'] ) ? (float) $attributes['longitude'] : null;
+	/* Whitelist the only two valid choices; anything else (missing, typo, accidental boolean) collapses to metric. */
+	$units = isset( $attributes['units'] ) && 'imperial' === $attributes['units'] ? 'imperial' : 'metric';
+	/* Same shape as $units: a small whitelist, with a graceful fallback to 'auto' for legacy posts and bad inputs. */
+	$time_format_pref = isset( $attributes['timeFormat'] ) && in_array( $attributes['timeFormat'], [ '12', '24' ], true )
+		? $attributes['timeFormat']
+		: 'auto';
 
 	/*
 	 * `weatherFields` arrives as an array on the front-end (block-comment JSON

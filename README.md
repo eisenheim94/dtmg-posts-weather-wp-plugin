@@ -26,9 +26,21 @@ In the block editor:
 1. Insert the **Posts + Weather** block.
 2. In the sidebar, pick two posts via the **Posts** panel.
 3. Enter a latitude and longitude under **Weather location**.
-4. Toggle which weather fields appear under **Weather fields**.
+4. Pick metric or imperial units, and a sunrise/sunset time format, under **Display**.
+5. Toggle which weather fields appear under **Weather fields**.
 
 The editor canvas shows a server-side preview that matches the front-end output exactly.
+
+### Units
+
+The OpenWeatherMap request always asks for metric data (°C, m/s); the cache key is `lat|lon` only and never includes a unit. Imperial output (°F, mph) is computed at render time from the cached metric values, so flipping units never costs a second API call and never doubles the cache footprint. Pressure (hPa) and humidity (%) are unit-agnostic and rendered as-is.
+
+### Time format
+
+The **Time format** control affects sunrise and sunset only:
+
+- **Automatic — visitor's locale.** Server renders the site-wide *Settings → General → Time format* as a no-JS fallback, and a small inline script (and a matching `MutationObserver` in the editor) rewrites the `<time>` text using the visitor's `toLocaleTimeString` so a US visitor sees `4:58 AM` while a German visitor sees `04:58`. This is the original behaviour and the default.
+- **12-hour (1:30 PM)** and **24-hour (13:30)** are explicit overrides. The PHP partial renders `g:i A` or `H:i` respectively and skips the `data-pwb-localtime` marker entirely, so the client-side localizer never touches the rendered text. No-JS clients see the same output as everyone else.
 
 ## REST endpoint
 

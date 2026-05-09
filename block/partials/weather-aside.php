@@ -7,8 +7,10 @@
  *
  * @package DTMG\PostsWeatherBlock
  *
- * @var \DTMG\PostsWeatherBlock\Weather\WeatherDTO $weather        Weather DTO.
- * @var array<string,bool>                         $weather_fields Visibility map.
+ * @var \DTMG\PostsWeatherBlock\Weather\WeatherDTO $weather          Weather DTO.
+ * @var array<string,bool>                         $weather_fields   Visibility map.
+ * @var string                                     $units            'metric' | 'imperial'.
+ * @var string                                     $time_format_pref 'auto' | '12' | '24'.
  */
 
 declare( strict_types=1 );
@@ -47,10 +49,93 @@ foreach ( $f as $key => $value ) {
 	}
 }
 
-$tz          = wp_timezone();
-$rise        = ( new \DateTimeImmutable( '@' . $weather->sunrise ) )->setTimezone( $tz );
-$set         = ( new \DateTimeImmutable( '@' . $weather->sunset ) )->setTimezone( $tz );
-$time_format = (string) get_option( 'time_format', 'H:i' );
+$tz   = wp_timezone();
+$rise = ( new \DateTimeImmutable( '@' . $weather->sunrise ) )->setTimezone( $tz );
+$set  = ( new \DateTimeImmutable( '@' . $weather->sunset ) )->setTimezone( $tz );
+
+/*
+ * Resolve the time-format preference into:
+ *   - $time_format:  the PHP `wp_date()` format string used for SSR output.
+ *   - $localize:     whether to emit `data-pwb-localtime`, which is the marker
+ *                    the inline script + edit.js MutationObserver key off to
+ *                    rewrite text using the visitor's browser locale.
+ *
+ * 'auto' keeps the current behaviour: render the site-wide time format
+ * server-side as the no-JS fallback, then let the client localizer override.
+ * '12' / '24' are explicit choices — render that exact format and skip the
+ * marker so the client localizer leaves the text alone.
+ */
+$time_format_pref = isset( $time_format_pref ) && in_array( $time_format_pref, [ '12', '24' ], true ) ? $time_format_pref : 'auto';
+if ( '12' === $time_format_pref ) {
+	$time_format = 'g:i A';
+	$localize    = false;
+} elseif ( '24' === $time_format_pref ) {
+	$time_format = 'H:i';
+	$localize    = false;
+} else {
+	$time_format = (string) get_option( 'time_format', 'H:i' );
+	$localize    = true;
+}
+
+/*
+ * Resolve the display unit. The OWM client always fetches metric (and the
+ * cache is keyed only on lat/lon), so any imperial output is computed here
+ * from the cached Celsius/m·s values — no extra HTTP round-trip, no second
+ * cache key.
+ */
+$units_choice = ( isset( $units ) && 'imperial' === $units ) ? 'imperial' : 'metric';
+
+if ( ! function_exists( 'dtmg_pwb_format_temperature' ) ) {
+
+	/**
+	 * Render a temperature value in the chosen unit, fully translated.
+	 *
+	 * @param float  $celsius     Temperature in degrees Celsius (DTO value).
+	 * @param string $units       'metric' or 'imperial'.
+	 * @param bool   $with_spacer Whether the unit symbol should be space-separated (true for "feels like" rows; false for the big tile temp).
+	 */
+	function dtmg_pwb_format_temperature( float $celsius, string $units, bool $with_spacer ): string {
+		$value     = 'imperial' === $units ? ( $celsius * 9 / 5 ) + 32 : $celsius;
+		$formatted = number_format_i18n( (float) round( $value ), 0 );
+
+		if ( $with_spacer ) {
+			$template = 'imperial' === $units
+				/* translators: %s: temperature value in degrees Fahrenheit. */
+				? __( '%s °F', 'dtmg-posts-weather-block' )
+				/* translators: %s: temperature value in degrees Celsius. */
+				: __( '%s °C', 'dtmg-posts-weather-block' );
+		} else {
+			$template = 'imperial' === $units
+				/* translators: %s: temperature value in degrees Fahrenheit. */
+				? __( '%s°F', 'dtmg-posts-weather-block' )
+				/* translators: %s: temperature value in degrees Celsius. */
+				: __( '%s°C', 'dtmg-posts-weather-block' );
+		}
+		return sprintf( $template, $formatted );
+	}
+}
+
+if ( ! function_exists( 'dtmg_pwb_format_wind' ) ) {
+
+	/**
+	 * Render a wind-speed value in the chosen unit, fully translated.
+	 *
+	 * @param float  $ms    Wind speed in metres per second (DTO value).
+	 * @param string $units 'metric' or 'imperial'.
+	 */
+	function dtmg_pwb_format_wind( float $ms, string $units ): string {
+		$value     = 'imperial' === $units ? $ms * 2.23694 : $ms;
+		$formatted = number_format_i18n( (float) round( $value ), 0 );
+
+		$template = 'imperial' === $units
+			/* translators: %s: wind speed in miles per hour. */
+			? __( '%s mph', 'dtmg-posts-weather-block' )
+			/* translators: %s: wind speed in metres per second. */
+			: __( '%s m/s', 'dtmg-posts-weather-block' );
+
+		return sprintf( $template, $formatted );
+	}
+}
 
 /* Whether to show the gradient media tile at all. */
 $show_media = $f['temp'] || $f['condition'];
@@ -113,7 +198,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 			<?php endif; ?>
 			<?php if ( $f['temp'] ) : ?>
 				<p class="wp-block-dtmg-posts-weather__weather-temp" data-pwb-field="temp"><?php
-					echo esc_html( sprintf( '%s°C', number_format_i18n( (float) round( $weather->temp ), 0 ) ) );
+					echo esc_html( dtmg_pwb_format_temperature( $weather->temp, $units_choice, false ) );
 				?></p>
 			<?php endif; ?>
 			<?php if ( $f['condition'] ) : ?>
@@ -140,7 +225,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Feels like', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="feels_like"><?php
-						echo esc_html( sprintf( '%s °C', number_format_i18n( (float) round( $weather->feels_like ), 0 ) ) );
+						echo esc_html( dtmg_pwb_format_temperature( $weather->feels_like, $units_choice, true ) );
 					?></dd>
 				</div>
 			<?php endif; ?>
@@ -176,7 +261,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Wind', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="wind_speed"><?php
-						echo esc_html( sprintf( '%s m/s', number_format_i18n( (float) round( $weather->wind_speed ), 0 ) ) );
+						echo esc_html( dtmg_pwb_format_wind( $weather->wind_speed, $units_choice ) );
 					?></dd>
 				</div>
 			<?php endif; ?>
@@ -188,7 +273,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Sunrise', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="sunrise">
-						<time data-pwb-localtime datetime="<?php echo esc_attr( $rise->format( DATE_W3C ) ); ?>">
+						<time<?php echo $localize ? ' data-pwb-localtime' : ''; ?> datetime="<?php echo esc_attr( $rise->format( DATE_W3C ) ); ?>">
 							<?php echo esc_html( wp_date( $time_format, $weather->sunrise ) ); ?>
 						</time>
 					</dd>
@@ -202,7 +287,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Sunset', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="sunset">
-						<time data-pwb-localtime datetime="<?php echo esc_attr( $set->format( DATE_W3C ) ); ?>">
+						<time<?php echo $localize ? ' data-pwb-localtime' : ''; ?> datetime="<?php echo esc_attr( $set->format( DATE_W3C ) ); ?>">
 							<?php echo esc_html( wp_date( $time_format, $weather->sunset ) ); ?>
 						</time>
 					</dd>
@@ -210,7 +295,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 			<?php endif; ?>
 		</dl>
 	</div>
-	<?php if ( $f['sunrise'] || $f['sunset'] ) : ?>
+	<?php if ( $localize && ( $f['sunrise'] || $f['sunset'] ) ) : ?>
 		<?php
 		/*
 		 * Localize sunrise/sunset to the visitor's browser locale + hour-cycle

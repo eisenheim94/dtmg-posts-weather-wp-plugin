@@ -18,6 +18,8 @@
 		"postIds": { "type": "array", "default": [ 0, 0 ] },
 		"latitude": { "type": [ "number", "null" ], "default": null },
 		"longitude": { "type": [ "number", "null" ], "default": null },
+		"units": { "type": "string", "default": "metric" },
+		"timeFormat": { "type": "string", "default": "auto" },
 		"weatherFields": {
 			"type": "object",
 			"default": {
