@@ -256,6 +256,31 @@
 		container-type: inline-size;
 	}
 
+	/*
+	 * Foreground swap for low-contrast tile backgrounds.
+	 *
+	 * The Kadence theme's three lightest palette slots (palette 7/8/9) are near-
+	 * white tints; once one of them is picked as the block's text colour, the
+	 * white temp/condition/cloud-icon disappear into the tile. WP adds a
+	 * `has-<slug>-color` class to the wrapper for the chosen preset (digits get
+	 * kebab-cased: `theme-palette7` → `has-theme-palette-7-color`); we key the
+	 * black override off those exact classes.
+	 *
+	 * Scope is intentionally narrow — only the media tile flips, because that's
+	 * the only surface that adopts the picked colour as a *background*. Eyebrow,
+	 * city, row values, and refresh stay coloured-on-page-background and remain
+	 * legible against the page.
+	 *
+	 * If the theme later renames or reorders the palette, this list is the only
+	 * thing to touch.
+	 */
+	&.has-theme-palette-7-color &__weather-media,
+	&.has-theme-palette-8-color &__weather-media,
+	&.has-theme-palette-9-color &__weather-media {
+		/* Soft near-black instead of pure #000: still high-contrast on the light tints, but matches the editorial feel of the rest of the card. */
+		color: #333;
+	}
+
 	&__weather-temp {
 		margin: 0;
 		font-family: var(--pwb-font-body);
