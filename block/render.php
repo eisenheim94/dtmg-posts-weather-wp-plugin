@@ -83,13 +83,54 @@ echo ( static function ( array $attributes ): string {
 
 	$show_admin_errors = current_user_can( 'manage_options' );
 
-	$wrapper_attributes = get_block_wrapper_attributes(
-		[
-			'class'    => 'wp-block-dtmg-posts-weather',
-			'data-lat' => null !== $latitude ? (string) $latitude : '',
-			'data-lon' => null !== $longitude ? (string) $longitude : '',
-		]
-	);
+	/*
+	 * Translate block color settings into CSS custom properties on the wrapper
+	 * so weather elements (eyebrow, location, icons, refresh button, media-tile
+	 * background) can opt into them via `var(--pwb-block-text, …fallback)` and
+	 * `var(--pwb-block-bg, …fallback)`. We emit our own vars in addition to the
+	 * `color` / `background-color` inline styles WP injects automatically,
+	 * because `background-color` doesn't inherit naturally to nested children
+	 * and several weather elements override `color` to a designed accent.
+	 *
+	 * Two source shapes are handled:
+	 *   - Custom hex picks (`style.color.text` / `style.color.background`)
+	 *   - Theme presets (`textColor` / `backgroundColor` slugs → wp preset var)
+	 */
+	$style_pairs = [];
+
+	/*
+	 * Theme preset slugs (`textColor` / `backgroundColor`) need the same
+	 * kebab-case transform WP applies when generating the
+	 * `--wp--preset--color--<slug>` variables, otherwise digit-trailing slugs
+	 * like "theme-palette14" produce `…--theme-palette14` here while the
+	 * actual WP-defined variable is `…--theme-palette-14`. The mismatch makes
+	 * the var() call undefined, and every `var(--pwb-block-text, …)` in the
+	 * SCSS silently falls through to its default — leaving the weather tile
+	 * unchanged. `_wp_to_kebab_case()` is the same helper core uses for this.
+	 */
+	if ( ! empty( $attributes['style']['color']['text'] ) && is_string( $attributes['style']['color']['text'] ) ) {
+		$style_pairs[] = '--pwb-block-text:' . $attributes['style']['color']['text'];
+	} elseif ( ! empty( $attributes['textColor'] ) && is_string( $attributes['textColor'] ) ) {
+		$style_pairs[] = '--pwb-block-text:var(--wp--preset--color--' . _wp_to_kebab_case( $attributes['textColor'] ) . ')';
+	}
+
+	if ( ! empty( $attributes['style']['color']['background'] ) && is_string( $attributes['style']['color']['background'] ) ) {
+		$style_pairs[] = '--pwb-block-bg:' . $attributes['style']['color']['background'];
+	} elseif ( ! empty( $attributes['backgroundColor'] ) && is_string( $attributes['backgroundColor'] ) ) {
+		$style_pairs[] = '--pwb-block-bg:var(--wp--preset--color--' . _wp_to_kebab_case( $attributes['backgroundColor'] ) . ')';
+	}
+
+	$wrapper_args = [
+		'class'    => 'wp-block-dtmg-posts-weather',
+		'data-lat' => null !== $latitude ? (string) $latitude : '',
+		'data-lon' => null !== $longitude ? (string) $longitude : '',
+	];
+	if ( ! empty( $style_pairs ) ) {
+		/* `get_block_wrapper_attributes` merges this with WP's auto-generated style. */
+		$wrapper_args['style'] = implode( ';', $style_pairs ) . ';';
+	}
+
+	$wrapper_attributes = get_block_wrapper_attributes( $wrapper_args );
 
 	if ( null === $hero_post && null === $sidebar_post && null === $weather && ! $show_admin_errors ) {
 		return '';

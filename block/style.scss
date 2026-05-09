@@ -40,6 +40,17 @@
 	container-type: inline-size;
 
 	/*
+	 * When the user picks a block text colour in the inspector, WP adds the
+	 * `.has-text-color` class to this wrapper and an inline `color: …` style.
+	 * Redefining `--pwb-block-text` to currentColor here means every weather
+	 * element that opted into the variable below adopts the user's pick
+	 * automatically — no server-side emission required.
+	 */
+	&.has-text-color {
+		--pwb-block-text: currentColor;
+	}
+
+	/*
 	 * Defensive reset: beat theme-derived margins.
 	 *
 	 * Block themes compile theme.json into `:root :where(h2) { margin-block: ... }`
@@ -156,6 +167,14 @@
 		color: var(--pwb-eyebrow-color);
 	}
 
+	/*
+	 * Weather elements: when the user picks a block text color, every weather
+	 * label/icon/value follows it; otherwise the design's tokens hold.
+	 */
+	&__weather-eyebrow {
+		color: var(--pwb-block-text, var(--pwb-eyebrow-color));
+	}
+
 	&__card-eyebrow a {
 		color: inherit;
 		text-decoration: none;
@@ -217,8 +236,22 @@
 		flex-direction: column;
 		justify-content: flex-end;
 		padding: 16px 18px;
+		/*
+		 * Tile contents stay white regardless of the user's text-colour pick —
+		 * the background is the only thing that follows it (via `--pwb-block-bg`)
+		 * so the temp/condition/icon need a guaranteed-readable colour against
+		 * whatever the picked background turns out to be.
+		 */
 		color: #fff;
-		background: linear-gradient(160deg, #6f9c6c 0%, var(--pwb-eyebrow-color) 100%);
+		/*
+		 * Tile background follows the block's *text* colour pick — that's the
+		 * single accent the design uses to tint everything weather-related
+		 * (eyebrow, city, row values, refresh, row icons, AND this tile). The
+		 * original green gradient stays as the fallback when no pick is set.
+		 */
+		background: var(--pwb-block-text, linear-gradient(160deg, #6f9c6c 0%, var(--pwb-eyebrow-color) 100%));
+		/* Clip the corner condition-icon (which intentionally bleeds past the edges) to the tile bounds. */
+		overflow: hidden;
 		/* Establish a container so the corner icon can size relative to the tile width. */
 		container-type: inline-size;
 	}
@@ -285,7 +318,7 @@
 		font-weight: 600;
 		font-size: 20px;
 		line-height: 1.2;
-		color: var(--pwb-text-color);
+		color: var(--pwb-block-text, var(--pwb-text-color));
 	}
 
 	&__weather-list {
@@ -311,6 +344,7 @@
 
 			dt {
 				margin: 0;
+				/* Labels (e.g. "Feels like") stay neutral so the row reads as label → value, regardless of the block's picked text colour. */
 				color: var(--pwb-muted-color);
 				font-weight: 400;
 				display: inline-flex;
@@ -320,7 +354,8 @@
 
 			dd {
 				margin: 0;
-				color: var(--pwb-text-color);
+				/* Values are the meaningful payload of each row, so they follow the user's text-colour pick. */
+				color: var(--pwb-block-text, var(--pwb-text-color));
 				font-variant-numeric: tabular-nums;
 			}
 		}
@@ -329,7 +364,8 @@
 	&__weather-row-icon {
 		font-size: 16px;
 		line-height: 1;
-		color: var(--pwb-eyebrow-color);
+		/* Row icons follow the block's text-colour pick (same accent as the eyebrow/city/values); fall back to the design green when nothing is set. */
+		color: var(--pwb-block-text, var(--pwb-eyebrow-color));
 		flex: 0 0 auto;
 	}
 
@@ -338,7 +374,7 @@
 		align-self: flex-start;
 		padding: 6px 14px;
 		background: transparent;
-		border: 1px solid var(--pwb-eyebrow-color);
+		border: 1px solid currentColor; /* matches whatever the text colour resolves to. */
 		border-radius: 999px;
 		font: inherit;
 		font-family: var(--pwb-font-eyebrow);
@@ -347,13 +383,13 @@
 		letter-spacing: 1px;
 		text-transform: uppercase;
 		cursor: pointer;
-		color: var(--pwb-eyebrow-color);
+		color: var(--pwb-block-text, var(--pwb-eyebrow-color));
 		transition: background-color 0.15s ease, color 0.15s ease;
 
 		&:hover,
 		&:focus-visible {
-			background: var(--pwb-eyebrow-color);
-			color: #fff;
+			background: currentColor;
+			color: var(--pwb-block-bg, #fff);
 		}
 
 		&[disabled] {
