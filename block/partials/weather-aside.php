@@ -113,7 +113,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 			<?php endif; ?>
 			<?php if ( $f['temp'] ) : ?>
 				<p class="wp-block-dtmg-posts-weather__weather-temp" data-pwb-field="temp"><?php
-					echo esc_html( sprintf( '%s°C', number_format_i18n( $weather->temp, 1 ) ) );
+					echo esc_html( sprintf( '%s°C', number_format_i18n( (float) round( $weather->temp ), 0 ) ) );
 				?></p>
 			<?php endif; ?>
 			<?php if ( $f['condition'] ) : ?>
@@ -140,7 +140,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Feels like', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="feels_like"><?php
-						echo esc_html( sprintf( '%s °C', number_format_i18n( $weather->feels_like, 1 ) ) );
+						echo esc_html( sprintf( '%s °C', number_format_i18n( (float) round( $weather->feels_like ), 0 ) ) );
 					?></dd>
 				</div>
 			<?php endif; ?>
@@ -176,7 +176,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Wind', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="wind_speed"><?php
-						echo esc_html( sprintf( '%s m/s', number_format_i18n( $weather->wind_speed, 1 ) ) );
+						echo esc_html( sprintf( '%s m/s', number_format_i18n( (float) round( $weather->wind_speed ), 0 ) ) );
 					?></dd>
 				</div>
 			<?php endif; ?>
@@ -209,12 +209,5 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 				</div>
 			<?php endif; ?>
 		</dl>
-
-		<button type="button"
-			class="wp-block-dtmg-posts-weather__weather-refresh"
-			data-pwb-refresh
-			aria-label="<?php esc_attr_e( 'Refresh weather', 'dtmg-posts-weather-block' ); ?>">
-			<?php esc_html_e( 'Refresh', 'dtmg-posts-weather-block' ); ?>
-		</button>
 	</div>
 </aside>

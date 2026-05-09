@@ -394,35 +394,6 @@
 		flex: 0 0 auto;
 	}
 
-	&__weather-refresh {
-		margin-top: 4px;
-		align-self: flex-start;
-		padding: 6px 14px;
-		background: transparent;
-		border: 1px solid currentColor; /* matches whatever the text colour resolves to. */
-		border-radius: 999px;
-		font: inherit;
-		font-family: var(--pwb-font-eyebrow);
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 1px;
-		text-transform: uppercase;
-		cursor: pointer;
-		color: var(--pwb-block-text, var(--pwb-eyebrow-color));
-		transition: background-color 0.15s ease, color 0.15s ease;
-
-		&:hover,
-		&:focus-visible {
-			background: currentColor;
-			color: var(--pwb-block-bg, #fff);
-		}
-
-		&[disabled] {
-			opacity: 0.5;
-			cursor: progress;
-		}
-	}
-
 	&__weather--error {
 		background: var(--pwb-error-bg);
 		color: var(--pwb-error-color);
