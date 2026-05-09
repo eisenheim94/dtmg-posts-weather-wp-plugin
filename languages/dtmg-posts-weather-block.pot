@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-09T12:23:32+00:00\n"
+"POT-Creation-Date: 2026-05-09T18:22:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: dtmg-posts-weather-block\n"
@@ -34,66 +34,104 @@ msgstr ""
 msgid "Demyd Hanenko"
 msgstr ""
 
-#: block/partials/weather-aside.php:36
+#. translators: %s: temperature value in degrees Fahrenheit.
+#: block/partials/weather-aside.php:104
+#: build/partials/weather-aside.php:104
+#, php-format
+msgid "%s °F"
+msgstr ""
+
+#. translators: %s: temperature value in degrees Celsius.
+#: block/partials/weather-aside.php:106
+#: build/partials/weather-aside.php:106
+#, php-format
+msgid "%s °C"
+msgstr ""
+
+#. translators: %s: temperature value in degrees Fahrenheit.
+#: block/partials/weather-aside.php:110
+#: build/partials/weather-aside.php:110
+#, php-format
+msgid "%s°F"
+msgstr ""
+
+#. translators: %s: temperature value in degrees Celsius.
+#: block/partials/weather-aside.php:112
+#: build/partials/weather-aside.php:112
+#, php-format
+msgid "%s°C"
+msgstr ""
+
+#. translators: %s: wind speed in miles per hour.
+#: block/partials/weather-aside.php:132
+#: build/partials/weather-aside.php:132
+#, php-format
+msgid "%s mph"
+msgstr ""
+
+#. translators: %s: wind speed in metres per second.
+#: block/partials/weather-aside.php:134
+#: build/partials/weather-aside.php:134
+#, php-format
+msgid "%s m/s"
+msgstr ""
+
+#: block/partials/weather-aside.php:190
+#: build/partials/weather-aside.php:190
 msgid "Current weather"
 msgstr ""
 
-#: block/partials/weather-aside.php:40
-msgid "Location"
+#: block/partials/weather-aside.php:214
+#: build/partials/weather-aside.php:214
+msgid "Weather"
 msgstr ""
 
-#: block/partials/weather-aside.php:47
-#: block/components/WeatherInspector.js:13
-msgid "Temperature"
-msgstr ""
-
-#: block/partials/weather-aside.php:56
+#: block/partials/weather-aside.php:225
+#: build/partials/weather-aside.php:225
 msgid "Feels like"
 msgstr ""
 
-#: block/partials/weather-aside.php:65
-msgid "Condition"
-msgstr ""
-
-#: block/partials/weather-aside.php:72
-#: block/components/WeatherInspector.js:16
+#: block/partials/weather-aside.php:237
+#: build/partials/weather-aside.php:237
+#: block/components/WeatherInspector.js:17
+#: build/index.js:1
 msgid "Humidity"
 msgstr ""
 
-#: block/partials/weather-aside.php:81
-#: block/components/WeatherInspector.js:17
+#: block/partials/weather-aside.php:249
+#: build/partials/weather-aside.php:249
+#: block/components/WeatherInspector.js:18
+#: build/index.js:1
 msgid "Pressure"
 msgstr ""
 
-#: block/partials/weather-aside.php:90
-#: block/components/WeatherInspector.js:18
-msgid "Wind speed"
+#: block/partials/weather-aside.php:261
+#: build/partials/weather-aside.php:261
+msgid "Wind"
 msgstr ""
 
-#: block/partials/weather-aside.php:99
-#: block/components/WeatherInspector.js:19
+#: block/partials/weather-aside.php:273
+#: build/partials/weather-aside.php:273
+#: block/components/WeatherInspector.js:20
+#: build/index.js:1
 msgid "Sunrise"
 msgstr ""
 
-#: block/partials/weather-aside.php:110
-#: block/components/WeatherInspector.js:20
+#: block/partials/weather-aside.php:287
+#: build/partials/weather-aside.php:287
+#: block/components/WeatherInspector.js:21
+#: build/index.js:1
 msgid "Sunset"
 msgstr ""
 
-#: block/partials/weather-aside.php:123
-msgid "Refresh weather"
-msgstr ""
-
-#: block/partials/weather-aside.php:124
-msgid "Refresh"
-msgstr ""
-
-#: block/render.php:71
+#: block/render.php:151
+#: build/render.php:151
 msgid "Posts and weather"
 msgstr ""
 
 #. translators: %s: error message from weather service.
-#: block/render.php:91
+#: block/render.php:183
+#: build/render.php:183
 #, php-format
 msgid "Weather unavailable: %s"
 msgstr ""
@@ -155,91 +193,172 @@ msgstr ""
 
 #: block/components/PostPicker.js:56
 #: block/components/PostPicker.js:64
+#: build/index.js:1
 msgid "(no title)"
 msgstr ""
 
-#: block/components/WeatherInspector.js:12
+#: block/components/WeatherInspector.js:13
+#: build/index.js:1
 msgid "Location name"
 msgstr ""
 
 #: block/components/WeatherInspector.js:14
-msgid "Feels-like temperature"
+#: build/index.js:1
+msgid "Temperature"
 msgstr ""
 
 #: block/components/WeatherInspector.js:15
+#: build/index.js:1
+msgid "Feels-like temperature"
+msgstr ""
+
+#: block/components/WeatherInspector.js:16
+#: build/index.js:1
 msgid "Weather condition"
 msgstr ""
 
-#: block/components/WeatherInspector.js:46
+#: block/components/WeatherInspector.js:19
+#: build/index.js:1
+msgid "Wind speed"
+msgstr ""
+
+#: block/components/WeatherInspector.js:53
+#: build/index.js:1
 msgid "Posts"
 msgstr ""
 
-#: block/components/WeatherInspector.js:50
+#: block/components/WeatherInspector.js:57
+#: build/index.js:1
 msgid "Post 1"
 msgstr ""
 
-#: block/components/WeatherInspector.js:55
+#: block/components/WeatherInspector.js:62
+#: build/index.js:1
 msgid "Post 2"
 msgstr ""
 
-#: block/components/WeatherInspector.js:62
+#: block/components/WeatherInspector.js:69
+#: build/index.js:1
 msgid "Weather location"
 msgstr ""
 
-#: block/components/WeatherInspector.js:66
+#: block/components/WeatherInspector.js:73
+#: build/index.js:1
 msgid "Latitude"
 msgstr ""
 
-#: block/components/WeatherInspector.js:80
+#: block/components/WeatherInspector.js:87
+#: build/index.js:1
 msgid "Latitude must be between -90 and 90."
 msgstr ""
 
-#: block/components/WeatherInspector.js:87
+#: block/components/WeatherInspector.js:94
+#: build/index.js:1
 msgid "Longitude"
 msgstr ""
 
-#: block/components/WeatherInspector.js:101
+#: block/components/WeatherInspector.js:108
+#: build/index.js:1
 msgid "Longitude must be between -180 and 180."
 msgstr ""
 
-#: block/components/WeatherInspector.js:110
+#: block/components/WeatherInspector.js:117
+#: build/index.js:1
+msgid "Display"
+msgstr ""
+
+#: block/components/WeatherInspector.js:121
+#: build/index.js:1
+msgid "Units"
+msgstr ""
+
+#: block/components/WeatherInspector.js:125
+#: build/index.js:1
+msgid "Metric (°C, m/s)"
+msgstr ""
+
+#: block/components/WeatherInspector.js:132
+#: build/index.js:1
+msgid "Imperial (°F, mph)"
+msgstr ""
+
+#: block/components/WeatherInspector.js:144
+#: build/index.js:1
+msgid "Conversion happens at render time; cached weather data stays metric."
+msgstr ""
+
+#: block/components/WeatherInspector.js:153
+#: build/index.js:1
+msgid "Time format"
+msgstr ""
+
+#: block/components/WeatherInspector.js:157
+#: build/index.js:1
+msgid "Automatic — visitor’s locale"
+msgstr ""
+
+#: block/components/WeatherInspector.js:164
+#: build/index.js:1
+msgid "12-hour (1:30 PM)"
+msgstr ""
+
+#: block/components/WeatherInspector.js:171
+#: build/index.js:1
+msgid "24-hour (13:30)"
+msgstr ""
+
+#: block/components/WeatherInspector.js:182
+#: build/index.js:1
+msgid "Applies to sunrise and sunset. Automatic uses each visitor’s browser locale; an explicit choice is server-rendered for everyone."
+msgstr ""
+
+#: block/components/WeatherInspector.js:192
+#: build/index.js:1
 msgid "Weather fields"
 msgstr ""
 
-#: block/edit.js:28
-#: block/edit.js:44
+#: block/edit.js:120
+#: block/edit.js:137
+#: build/index.js:1
 msgid "Posts + Weather"
 msgstr ""
 
-#: block/edit.js:32
+#: block/edit.js:124
+#: build/index.js:1
 msgid "Pick two posts and enter latitude and longitude in the sidebar to see the preview."
 msgstr ""
 
-#: block/edit.js:48
+#: block/edit.js:141
+#: build/index.js:1
 msgid "Nothing to preview yet."
 msgstr ""
 
 #: block/block.json
+#: build/block.json
 msgctxt "block title"
 msgid "Posts + Weather"
 msgstr ""
 
 #: block/block.json
+#: build/block.json
 msgctxt "block description"
 msgid "Two posts plus a configurable weather snippet."
 msgstr ""
 
 #: block/block.json
+#: build/block.json
 msgctxt "block keyword"
 msgid "weather"
 msgstr ""
 
 #: block/block.json
+#: build/block.json
 msgctxt "block keyword"
 msgid "posts"
 msgstr ""
 
 #: block/block.json
+#: build/block.json
 msgctxt "block keyword"
 msgid "openweathermap"
 msgstr ""
