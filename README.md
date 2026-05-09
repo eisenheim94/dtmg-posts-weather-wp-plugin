@@ -6,14 +6,17 @@ The block is dynamic (server-rendered), responsive (container-query layout), and
 
 ## Quick start
 
+This directory is the plugin itself. It does **not** ship with a Docker harness or a local WordPress — drop it into any existing WordPress install at `wp-content/plugins/dtmg-posts-weather-block/` and run:
+
 ```bash
-composer install
-npm install
-npm run env:start    # boots WordPress in Docker (~2 min on first run)
-npm run build
+composer install   # PSR-4 autoloader + WPCS dev deps
+npm install        # @wordpress/scripts (build pipeline only)
+npm run build      # compiles block/ → build/
 ```
 
-The site is served at http://localhost:8888 (admin: `admin` / `password`).
+Then activate **DTMG Posts + Weather Block** in *Plugins → Installed Plugins*. Requirements: WordPress ≥ 6.5, PHP ≥ 8.1.
+
+For local development with a fresh wp-env-driven WordPress, the test-harness scaffolding (a sibling `package.json` with `wp-env start`, `plugin:install`, `plugin:build` orchestration scripts) lives one level above this directory in the test repo and is **not** part of the plugin's git history. If you have that scaffolding, see its top-level `README.md`; otherwise the three commands above are enough.
 
 ## Configuration
 
@@ -106,7 +109,6 @@ npm run format                # prettier-style format pass for editor JS/SCSS
 - **Lucide is loaded from a CDN at `@latest`.** Reproducible builds should pin a version; full self-hosting is straightforward (drop the CSS + woff2 files into the plugin and re-target the `wp_register_style` URL).
 - **Body typography is theme-defined**, deliberately. The Figma uses Archivo; the plugin does not load any webfont so the block blends with the host theme. Reintroducing the design typeface is a one-line `wp_register_style` if a project requires a literal Figma match.
 - **No rate-limiting** on the REST endpoint — suitable for the test task; production deployment would add a per-IP transient guard.
-- **`lint:css` shows pre-existing warnings** (line-length and `comment-empty-line-before`) inherited from the initial SCSS commit; they are formatting-only and don't affect output. Running `npm run lint:css -- --fix` resolves most of them.
 
 ## License
 
