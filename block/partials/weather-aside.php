@@ -188,7 +188,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Sunrise', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="sunrise">
-						<time datetime="<?php echo esc_attr( $rise->format( DATE_W3C ) ); ?>">
+						<time data-pwb-localtime datetime="<?php echo esc_attr( $rise->format( DATE_W3C ) ); ?>">
 							<?php echo esc_html( wp_date( $time_format, $weather->sunrise ) ); ?>
 						</time>
 					</dd>
@@ -202,7 +202,7 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 						<span><?php esc_html_e( 'Sunset', 'dtmg-posts-weather-block' ); ?></span>
 					</dt>
 					<dd data-pwb-field="sunset">
-						<time datetime="<?php echo esc_attr( $set->format( DATE_W3C ) ); ?>">
+						<time data-pwb-localtime datetime="<?php echo esc_attr( $set->format( DATE_W3C ) ); ?>">
 							<?php echo esc_html( wp_date( $time_format, $weather->sunset ) ); ?>
 						</time>
 					</dd>
@@ -210,4 +210,45 @@ $condition_icon_class = dtmg_pwb_lucide_icon_for_condition( $weather->condition,
 			<?php endif; ?>
 		</dl>
 	</div>
+	<?php if ( $f['sunrise'] || $f['sunset'] ) : ?>
+		<?php
+		/*
+		 * Localize sunrise/sunset to the visitor's browser locale + hour-cycle
+		 * preference (so a US visitor sees "4:58 AM" while a German one sees
+		 * "04:58"). The PHP-rendered `wp_date()` value above is the SSR fallback
+		 * for no-JS clients; this swap is a progressive enhancement.
+		 *
+		 * Inlined deliberately: a single ~10-line DOM tweak doesn't justify
+		 * re-introducing a `viewScript` entry-point (extra HTTP request, build
+		 * step, asset.php). If a strict CSP rules out inline scripts later, lift
+		 * this back into a `view.js`.
+		 *
+		 * Output is escaped via `wp_strip_all_tags`+`wp_json_encode` indirectly
+		 * (no dynamic data flows in), and the script is statically authored.
+		 */
+		?>
+		<script>
+		/*
+		 * Written without `&&` / `&` operators on purpose: this script lives
+		 * inside `the_content`, and WP's text filters (wptexturize et al.)
+		 * encode any literal `&` to `&#038;`, which would turn `&&` into
+		 * `&#038;&#038;` — invalid JS, silent SyntaxError, swap never runs.
+		 * Using guarded early-`continue` keeps the source ASCII-safe through
+		 * those filters. Same reason `<` only appears inside the `for` header
+		 * (single `<` survives texturize, but the pattern is fragile so any
+		 * future edit should keep operators ampersand-free or move this script
+		 * out of the_content via wp_print_footer_scripts).
+		 */
+		(function(){
+			var nodes = document.currentScript.parentNode.querySelectorAll('[data-pwb-localtime]');
+			for (var i = 0; i < nodes.length; i++) {
+				var iso = nodes[i].getAttribute('datetime');
+				if (!iso) { continue; }
+				var d = new Date(iso);
+				if (isNaN(d.getTime())) { continue; }
+				nodes[i].textContent = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+			}
+		})();
+		</script>
+	<?php endif; ?>
 </aside>
