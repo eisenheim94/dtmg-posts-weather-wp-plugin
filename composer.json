@@ -1,0 +1,28 @@
+{
+    "name": "dtmg/posts-weather-block",
+    "description": "A WordPress Gutenberg block that displays two posts and a cached OpenWeatherMap weather snippet.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^3.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "DTMG\\PostsWeatherBlock\\": "src/"
+        }
+    },
+    "scripts": {
+        "phpcs":     "phpcs",
+        "phpcs:fix": "phpcbf"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

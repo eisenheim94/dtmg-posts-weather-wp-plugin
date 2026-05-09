@@ -1,0 +1,23 @@
+# Dependencies
+/node_modules/
+/vendor/
+
+# Build output
+/build/
+
+# Compiled translations
+/languages/*.mo
+
+# wp-env
+.wp-env.override.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Logs
+*.log

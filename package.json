@@ -1,0 +1,17 @@
+{
+    "name": "dtmg-posts-weather-block",
+    "version": "1.0.0",
+    "description": "A WordPress Gutenberg block that displays two posts and a cached OpenWeatherMap weather snippet.",
+    "private": true,
+    "license": "GPL-2.0-or-later",
+    "scripts": {
+        "start":    "wp-scripts start --webpack-src-dir=block --output-path=build",
+        "build":    "wp-scripts build --webpack-src-dir=block --output-path=build",
+        "format":   "wp-scripts format block",
+        "lint:js":  "wp-scripts lint-js block",
+        "lint:css": "wp-scripts lint-style block/**/*.scss"
+    },
+    "devDependencies": {
+        "@wordpress/scripts": "^30.0.0"
+    }
+}

@@ -1,0 +1,41 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "dtmg/posts-weather",
+	"title": "Posts + Weather",
+	"category": "widgets",
+	"icon": "cloud",
+	"description": "Two posts plus a configurable weather snippet.",
+	"keywords": [ "weather", "posts", "openweathermap" ],
+	"textdomain": "dtmg-posts-weather-block",
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": { "margin": true, "padding": true },
+		"color": { "background": true, "text": true }
+	},
+	"attributes": {
+		"postIds": { "type": "array", "default": [ 0, 0 ] },
+		"latitude": { "type": [ "number", "null" ], "default": null },
+		"longitude": { "type": [ "number", "null" ], "default": null },
+		"weatherFields": {
+			"type": "object",
+			"default": {
+				"location": true,
+				"temp": true,
+				"feelsLike": true,
+				"condition": true,
+				"humidity": true,
+				"pressure": true,
+				"wind": true,
+				"sunrise": true,
+				"sunset": true
+			}
+		}
+	},
+	"render": "file:./render.php",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}

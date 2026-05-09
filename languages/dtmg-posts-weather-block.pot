@@ -1,0 +1,245 @@
+# Copyright (C) 2026 Demyd Hanenko
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: DTMG Posts + Weather Block 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/dtmg-posts-weather-block\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-05-09T12:23:32+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: dtmg-posts-weather-block\n"
+
+#. Plugin Name of the plugin
+#: dtmg-posts-weather-block.php
+msgid "DTMG Posts + Weather Block"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: dtmg-posts-weather-block.php
+msgid "https://github.com/<placeholder>/dtmg-posts-weather-block"
+msgstr ""
+
+#. Description of the plugin
+#: dtmg-posts-weather-block.php
+msgid "A Gutenberg block that displays two selected posts and a cached OpenWeatherMap snippet."
+msgstr ""
+
+#. Author of the plugin
+#: dtmg-posts-weather-block.php
+msgid "Demyd Hanenko"
+msgstr ""
+
+#: block/partials/weather-aside.php:36
+msgid "Current weather"
+msgstr ""
+
+#: block/partials/weather-aside.php:40
+msgid "Location"
+msgstr ""
+
+#: block/partials/weather-aside.php:47
+#: block/components/WeatherInspector.js:13
+msgid "Temperature"
+msgstr ""
+
+#: block/partials/weather-aside.php:56
+msgid "Feels like"
+msgstr ""
+
+#: block/partials/weather-aside.php:65
+msgid "Condition"
+msgstr ""
+
+#: block/partials/weather-aside.php:72
+#: block/components/WeatherInspector.js:16
+msgid "Humidity"
+msgstr ""
+
+#: block/partials/weather-aside.php:81
+#: block/components/WeatherInspector.js:17
+msgid "Pressure"
+msgstr ""
+
+#: block/partials/weather-aside.php:90
+#: block/components/WeatherInspector.js:18
+msgid "Wind speed"
+msgstr ""
+
+#: block/partials/weather-aside.php:99
+#: block/components/WeatherInspector.js:19
+msgid "Sunrise"
+msgstr ""
+
+#: block/partials/weather-aside.php:110
+#: block/components/WeatherInspector.js:20
+msgid "Sunset"
+msgstr ""
+
+#: block/partials/weather-aside.php:123
+msgid "Refresh weather"
+msgstr ""
+
+#: block/partials/weather-aside.php:124
+msgid "Refresh"
+msgstr ""
+
+#: block/render.php:71
+msgid "Posts and weather"
+msgstr ""
+
+#. translators: %s: error message from weather service.
+#: block/render.php:91
+#, php-format
+msgid "Weather unavailable: %s"
+msgstr ""
+
+#: dtmg-posts-weather-block.php:32
+msgid "DTMG Posts + Weather Block: vendor/ is missing. Run `composer install` in the plugin directory."
+msgstr ""
+
+#: src/Admin/AdminNotices.php:53
+msgid "DTMG Posts + Weather Block:"
+msgstr ""
+
+#: src/Admin/AdminNotices.php:54
+msgid "an OpenWeatherMap API key is required for the block to display weather."
+msgstr ""
+
+#: src/Admin/AdminNotices.php:55
+msgid "Configure now"
+msgstr ""
+
+#: src/Settings/SettingsPage.php:68
+msgid "OpenWeatherMap API"
+msgstr ""
+
+#: src/Settings/SettingsPage.php:75
+msgid "API key"
+msgstr ""
+
+#: src/Settings/SettingsPage.php:88
+#: src/Settings/SettingsPage.php:89
+msgid "DTMG Posts + Weather"
+msgstr ""
+
+#: src/Settings/SettingsPage.php:123
+msgid "Paste your OpenWeatherMap API key. The stored value is never sent to the browser; only weather data is."
+msgstr ""
+
+#: src/Settings/SettingsPage.php:145
+msgid "No API key saved yet."
+msgstr ""
+
+#: src/Settings/SettingsPage.php:146
+msgid "A key is saved. Paste a new value to replace it; leave blank to keep the existing key."
+msgstr ""
+
+#: src/Weather/WeatherClient.php:41
+msgid "OpenWeatherMap API key is not configured."
+msgstr ""
+
+#. translators: %d: HTTP status code from OpenWeatherMap.
+#: src/Weather/WeatherClient.php:74
+#, php-format
+msgid "OpenWeatherMap returned HTTP %d."
+msgstr ""
+
+#: src/Weather/WeatherClient.php:83
+msgid "Could not decode OpenWeatherMap response."
+msgstr ""
+
+#: block/components/PostPicker.js:56
+#: block/components/PostPicker.js:64
+msgid "(no title)"
+msgstr ""
+
+#: block/components/WeatherInspector.js:12
+msgid "Location name"
+msgstr ""
+
+#: block/components/WeatherInspector.js:14
+msgid "Feels-like temperature"
+msgstr ""
+
+#: block/components/WeatherInspector.js:15
+msgid "Weather condition"
+msgstr ""
+
+#: block/components/WeatherInspector.js:46
+msgid "Posts"
+msgstr ""
+
+#: block/components/WeatherInspector.js:50
+msgid "Post 1"
+msgstr ""
+
+#: block/components/WeatherInspector.js:55
+msgid "Post 2"
+msgstr ""
+
+#: block/components/WeatherInspector.js:62
+msgid "Weather location"
+msgstr ""
+
+#: block/components/WeatherInspector.js:66
+msgid "Latitude"
+msgstr ""
+
+#: block/components/WeatherInspector.js:80
+msgid "Latitude must be between -90 and 90."
+msgstr ""
+
+#: block/components/WeatherInspector.js:87
+msgid "Longitude"
+msgstr ""
+
+#: block/components/WeatherInspector.js:101
+msgid "Longitude must be between -180 and 180."
+msgstr ""
+
+#: block/components/WeatherInspector.js:110
+msgid "Weather fields"
+msgstr ""
+
+#: block/edit.js:28
+#: block/edit.js:44
+msgid "Posts + Weather"
+msgstr ""
+
+#: block/edit.js:32
+msgid "Pick two posts and enter latitude and longitude in the sidebar to see the preview."
+msgstr ""
+
+#: block/edit.js:48
+msgid "Nothing to preview yet."
+msgstr ""
+
+#: block/block.json
+msgctxt "block title"
+msgid "Posts + Weather"
+msgstr ""
+
+#: block/block.json
+msgctxt "block description"
+msgid "Two posts plus a configurable weather snippet."
+msgstr ""
+
+#: block/block.json
+msgctxt "block keyword"
+msgid "weather"
+msgstr ""
+
+#: block/block.json
+msgctxt "block keyword"
+msgid "posts"
+msgstr ""
+
+#: block/block.json
+msgctxt "block keyword"
+msgid "openweathermap"
+msgstr ""
