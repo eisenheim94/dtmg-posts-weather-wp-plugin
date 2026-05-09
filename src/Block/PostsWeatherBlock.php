@@ -30,13 +30,12 @@ final class PostsWeatherBlock {
 	public function __construct( private readonly WeatherService $service ) {}
 
 	/**
-	 * Google Fonts handle. Loads Archivo + Archivo Narrow with `display=swap`
-	 * so the block matches the Figma typography spec.
-	 */
-	private const FONTS_HANDLE = 'dtmg-pwb-fonts';
-
-	/**
 	 * Lucide icon-font handle. Loaded from the unpkg CDN.
+	 *
+	 * Body typography is intentionally left to the active theme so the block
+	 * inherits the surrounding site's font stack. Only the Lucide icon font is
+	 * registered here because the weather snippet relies on its glyphs and no
+	 * theme is expected to ship an equivalent.
 	 */
 	private const LUCIDE_HANDLE = 'dtmg-pwb-lucide';
 
@@ -45,7 +44,8 @@ final class PostsWeatherBlock {
 	 */
 	public function register(): void {
 		add_action( 'init', [ $this, 'register_block' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_fonts' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_lucide' ] );
+
 		/*
 		 * `enqueue_block_assets` (vs. `enqueue_block_editor_assets`) is the
 		 * hook that fires INSIDE the editor iframe. Modern Gutenberg renders
@@ -54,26 +54,18 @@ final class PostsWeatherBlock {
 		 * is_admin() so the front-end branch is left to the lazy render_block
 		 * attach below.
 		 */
-		add_action( 'enqueue_block_assets', [ $this, 'enqueue_editor_fonts' ] );
-		add_filter( 'render_block', [ $this, 'attach_fonts_on_render' ], 10, 2 );
+		add_action( 'enqueue_block_assets', [ $this, 'enqueue_editor_lucide' ] );
+		add_filter( 'render_block', [ $this, 'attach_lucide_on_render' ], 10, 2 );
 	}
 
 	/**
-	 * Register the fonts stylesheet so render-time enqueue is cheap.
+	 * Register the Lucide stylesheet so render-time enqueue is cheap.
 	 *
 	 * Hooked on `wp_enqueue_scripts` (front-end). Editor uses
-	 * {@see enqueue_editor_fonts()} which always loads the fonts because
+	 * {@see enqueue_editor_lucide()} which always loads the stylesheet because
 	 * ServerSideRender doesn't pass through `render_block`.
 	 */
-	public function register_fonts(): void {
-		if ( ! wp_style_is( self::FONTS_HANDLE, 'registered' ) ) {
-			wp_register_style(
-				self::FONTS_HANDLE,
-				'https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@600&family=Archivo:wght@400;600&display=swap',
-				[],
-				null // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter, WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Google Fonts URL is versioned upstream.
-			);
-		}
+	public function register_lucide(): void {
 		if ( ! wp_style_is( self::LUCIDE_HANDLE, 'registered' ) ) {
 			wp_register_style(
 				self::LUCIDE_HANDLE,
@@ -85,31 +77,29 @@ final class PostsWeatherBlock {
 	}
 
 	/**
-	 * Editor preview: load Google Fonts + Lucide inside the editor iframe so
-	 * the ServerSideRender output looks identical to the front-end. Gated on
+	 * Editor preview: load Lucide inside the editor iframe so the
+	 * ServerSideRender output looks identical to the front-end. Gated on
 	 * is_admin() because `enqueue_block_assets` also fires on the front-end,
-	 * where {@see attach_fonts_on_render()} handles lazy loading instead.
+	 * where {@see attach_lucide_on_render()} handles lazy loading instead.
 	 */
-	public function enqueue_editor_fonts(): void {
+	public function enqueue_editor_lucide(): void {
 		if ( ! is_admin() ) {
 			return;
 		}
-		$this->register_fonts();
-		wp_enqueue_style( self::FONTS_HANDLE );
+		$this->register_lucide();
 		wp_enqueue_style( self::LUCIDE_HANDLE );
 	}
 
 	/**
-	 * Attach the fonts + Lucide handles the moment our block is rendered.
-	 * Avoids loading either CDN on pages that don't use the block.
+	 * Attach the Lucide handle the moment our block is rendered. Avoids
+	 * loading the CDN on pages that don't use the block.
 	 *
 	 * @param string              $block_content Rendered block markup.
 	 * @param array<string,mixed> $block         Parsed block array.
 	 */
-	public function attach_fonts_on_render( string $block_content, array $block ): string {
+	public function attach_lucide_on_render( string $block_content, array $block ): string {
 		if ( isset( $block['blockName'] ) && 'dtmg/posts-weather' === $block['blockName'] ) {
-			$this->register_fonts();
-			wp_enqueue_style( self::FONTS_HANDLE );
+			$this->register_lucide();
 			wp_enqueue_style( self::LUCIDE_HANDLE );
 		}
 		return $block_content;

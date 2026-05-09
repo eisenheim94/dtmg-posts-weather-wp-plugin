@@ -29,13 +29,17 @@
 	--pwb-error-bg: #fff7f7;
 	--pwb-error-color: #6b1f1f;
 
-	/* Typography tokens (Figma) */
-	--pwb-font-body: "Archivo", system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
-	--pwb-font-eyebrow: "Archivo Narrow", "Archivo", system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+	/*
+	 * Typography is inherited from the active theme. The Figma design uses
+	 * Archivo / Archivo Narrow, but bundling a webfont would override the host
+	 * site's typography choice and pull a third-party CDN into every page that
+	 * uses the block. Headings, body copy, and the eyebrow all inherit from
+	 * the theme; only the weather temperature/eyebrow keep weight + size
+	 * overrides further down so the visual hierarchy from the design survives.
+	 */
 
 	background: var(--pwb-bg);
 	color: var(--pwb-text-color);
-	font-family: var(--pwb-font-body);
 	padding-block: var(--pwb-pad-top) var(--pwb-pad-bottom);
 	container-type: inline-size;
 
@@ -158,7 +162,6 @@
 	&__card-eyebrow,
 	&__weather-eyebrow {
 		margin: 0;
-		font-family: var(--pwb-font-eyebrow);
 		font-weight: 600;
 		font-size: 14px;
 		line-height: 19px;
@@ -187,7 +190,6 @@
 
 	&__card-title {
 		margin: 0;
-		font-family: var(--pwb-font-body);
 		font-weight: 600;
 		line-height: 1.2;
 		color: var(--pwb-text-color);
@@ -205,7 +207,6 @@
 
 	&__card-excerpt {
 		margin: 0;
-		font-family: var(--pwb-font-body);
 		font-weight: 400;
 		font-size: 14px;
 		line-height: 1.4;
@@ -283,7 +284,6 @@
 
 	&__weather-temp {
 		margin: 0;
-		font-family: var(--pwb-font-body);
 		font-weight: 600;
 		font-size: 38px;
 		line-height: 1;
@@ -292,7 +292,6 @@
 
 	&__weather-condition {
 		margin: 4px 0 0;
-		font-family: var(--pwb-font-eyebrow);
 		font-weight: 600;
 		font-size: 14px;
 		line-height: 19px;
@@ -339,7 +338,6 @@
 
 	&__weather-location {
 		margin: 0;
-		font-family: var(--pwb-font-body);
 		font-weight: 600;
 		font-size: 20px;
 		line-height: 1.2;
@@ -357,7 +355,6 @@
 			justify-content: space-between;
 			align-items: center;
 			gap: 12px;
-			font-family: var(--pwb-font-body);
 			font-size: 14px;
 			line-height: 1.4;
 			padding-block: 6px;

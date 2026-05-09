@@ -57,13 +57,21 @@ src/                                # PHP, PSR-4: DTMG\PostsWeatherBlock\
 └── CLI/FlushCacheCommand.php       # wp dtmg-weather flush
 block/                              # editor + view sources
 ├── block.json
-├── index.js / edit.js / view.js
-├── render.php + partials/
+├── index.js / edit.js                # editor entry + Edit component
+├── render.php + partials/            # SSR markup
 ├── style.scss / editor.scss
 └── components/{PostPicker,WeatherInspector}.js
 ```
 
+There is no separate `view.js`: the only front-end JS is a ~10-line localizer for `<time data-pwb-localtime>` that ships inline inside `partials/weather-aside.php`. The editor runs an equivalent `MutationObserver` inside `edit.js` because `<ServerSideRender>` injects markup via `innerHTML`, and `<script>` nodes set that way never execute.
+
 The four-class weather pipeline isolates HTTP (`Client`), normalization (`DTO`), caching (`Service`), and transport (`Controller`). The Service is the only place that knows about transients, so the WP-CLI command and REST controller share one cache layer.
+
+## Typography and assets
+
+Body typography is **inherited from the active theme** — the plugin does not bundle or load any webfont. The Figma reference uses Archivo / Archivo Narrow, but bundling a webfont would override the host site's font choice and pull a third-party CDN into every page that uses the block; sizes, weights, and weight-relative sizing from the design are preserved without imposing a typeface.
+
+The plugin does load **one external stylesheet**: the [Lucide](https://lucide.dev/) icon font (`https://unpkg.com/lucide-static@latest/font/lucide.css`), used for the weather condition icon on the gradient tile and the row glyphs (humidity, pressure, wind, sunrise, sunset). The `@latest` URL is intentional for the test deliverable; pin a version in production. The handle (`dtmg-pwb-lucide`) is enqueued lazily — only on pages where the block actually renders, plus inside the editor iframe — so other pages never hit the CDN.
 
 ## Coding standards
 
@@ -80,10 +88,13 @@ npm run format                # prettier-style format pass for editor JS/SCSS
 ## Limitations / what was deliberately not done
 
 - **No automated tests** — interview deliverable; the focus is architecture, escaping, accessibility, and WPCS conformance.
-- **No CI workflow files**.
-- **Coordinates are rounded to two decimals** before caching (~1.1 km granularity) to bound key cardinality; tweak in `WeatherService::normalize_coords()` if finer precision is needed.
-- **Weather icons are not rendered** — only condition labels. Adding an inline SVG set is a small, isolated change.
+- **No CI workflow files.**
+- **REST, not `admin-ajax.php`.** The task brief asked for "a WordPress AJAX endpoint." This implementation registers a REST route (`GET /wp-json/dtmg/v1/weather`), which is the modern WordPress idiom and satisfies every functional sub-bullet (lat/lon args, public, JSON, 1h cache, key not exposed). A literal reading of the brief would expect `wp_ajax_*` / `wp_ajax_nopriv_*` actions on `admin-ajax.php`; adding a thin admin-ajax wrapper that delegates to `WeatherService::get()` is a small follow-up if a strict interpretation is required.
+- **Coordinates are rounded to two decimals** before caching (~1.1 km granularity) to bound key cardinality. The rounded value is also what gets sent to OpenWeatherMap, so two requests within the same ~1 km cell receive byte-identical responses by design. Tweak in `WeatherService::normalize_coords()` if finer precision is needed.
+- **Lucide is loaded from a CDN at `@latest`.** Reproducible builds should pin a version; full self-hosting is straightforward (drop the CSS + woff2 files into the plugin and re-target the `wp_register_style` URL).
+- **Body typography is theme-defined**, deliberately. The Figma uses Archivo; the plugin does not load any webfont so the block blends with the host theme. Reintroducing the design typeface is a one-line `wp_register_style` if a project requires a literal Figma match.
 - **No rate-limiting** on the REST endpoint — suitable for the test task; production deployment would add a per-IP transient guard.
+- **`lint:css` shows pre-existing warnings** (line-length and `comment-empty-line-before`) inherited from the initial SCSS commit; they are formatting-only and don't affect output. Running `npm run lint:css -- --fix` resolves most of them.
 
 ## License
 

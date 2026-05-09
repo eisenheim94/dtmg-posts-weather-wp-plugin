@@ -97,7 +97,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		 * triggers itself and the editor hangs hard. Reconnecting after each
 		 * pass keeps us reactive to the next genuine SSR refresh.
 		 */
-		const observer = new MutationObserver( () => {
+		const observer = new window.MutationObserver( () => {
 			observer.disconnect();
 			localizeTimes( root );
 			observer.observe( root, { childList: true, subtree: true } );
