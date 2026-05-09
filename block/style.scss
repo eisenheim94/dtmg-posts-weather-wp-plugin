@@ -10,6 +10,13 @@
  * Slot mapping inside the sidebar: post #2 on top, weather widget below.
  */
 
+/*
+ * Default tile gradient for the weather media block. Stays as a SCSS-time
+ * value so the `background:` declaration that consumes it (with a
+ * `var(--pwb-block-text, …)` override) fits on a single readable line.
+ */
+$pwb-weather-tile-gradient: linear-gradient(160deg, #6f9c6c 0%, #537a50 100%);
+
 .wp-block-dtmg-posts-weather {
 
 	/* Layout tokens (Figma) */
@@ -51,19 +58,20 @@
 	 * automatically — no server-side emission required.
 	 */
 	&.has-text-color {
-		--pwb-block-text: currentColor;
+		--pwb-block-text: currentcolor;
 	}
 
 	/*
 	 * Defensive reset: beat theme-derived margins.
 	 *
-	 * Block themes compile theme.json into `:root :where(h2) { margin-block: ... }`
-	 * (0,1,0) and many ship `.entry-content h2 { margin: ... }` (0,1,1). Both load
-	 * AFTER the plugin style and tie/beat a plain `.wp-block-dtmg-posts-weather h2`
-	 * reset.
+	 * Block themes compile theme.json into
+	 * `:root :where(h2) { margin-block: ... }` (0,1,0) and many ship
+	 * `.entry-content h2 { margin: ... }` (0,1,1). Both load AFTER the plugin
+	 * style and tie/beat a plain `.wp-block-dtmg-posts-weather h2` reset.
 	 *
-	 * Doubling the wrapper class (`&#{&}`) lifts the reset to specificity 0,2,1 so
-	 * we win against any realistic theme rule without using !important.
+	 * Doubling the wrapper class (`&#{&}`) lifts the reset to specificity
+	 * 0,2,1 so we win against any realistic theme rule without using
+	 * !important.
 	 */
 	&#{&} {
 
@@ -178,30 +186,27 @@
 		color: var(--pwb-block-text, var(--pwb-eyebrow-color));
 	}
 
-	&__card-eyebrow a {
+	&__card-title {
+		margin: 0;
+		font-weight: 600;
+		line-height: 1.2;
+		color: var(--pwb-text-color);
+	}
+
+	/*
+	 * Shared link reset for the eyebrow + title anchors. Merging both
+	 * selectors into one rule keeps the compiled CSS at a single specificity
+	 * for `a` / `a:hover`, which avoids stylelint's no-descending-specificity
+	 * complaint and removes the duplicated declaration block.
+	 */
+	&__card-eyebrow a,
+	&__card-title a {
 		color: inherit;
 		text-decoration: none;
 
 		&:hover,
 		&:focus-visible {
 			text-decoration: underline;
-		}
-	}
-
-	&__card-title {
-		margin: 0;
-		font-weight: 600;
-		line-height: 1.2;
-		color: var(--pwb-text-color);
-
-		a {
-			color: inherit;
-			text-decoration: none;
-
-			&:hover,
-			&:focus-visible {
-				text-decoration: underline;
-			}
 		}
 	}
 
@@ -237,6 +242,7 @@
 		flex-direction: column;
 		justify-content: flex-end;
 		padding: 16px 18px;
+
 		/*
 		 * Tile contents stay white regardless of the user's text-colour pick —
 		 * the background is the only thing that follows it (via `--pwb-block-bg`)
@@ -244,16 +250,25 @@
 		 * whatever the picked background turns out to be.
 		 */
 		color: #fff;
+
 		/*
 		 * Tile background follows the block's *text* colour pick — that's the
 		 * single accent the design uses to tint everything weather-related
 		 * (eyebrow, city, row values, refresh, row icons, AND this tile). The
 		 * original green gradient stays as the fallback when no pick is set.
 		 */
-		background: var(--pwb-block-text, linear-gradient(160deg, #6f9c6c 0%, var(--pwb-eyebrow-color) 100%));
-		/* Clip the corner condition-icon (which intentionally bleeds past the edges) to the tile bounds. */
+		background: var(--pwb-block-text, $pwb-weather-tile-gradient);
+
+		/*
+		 * Clip the corner condition-icon (which intentionally bleeds past
+		 * the edges) to the tile bounds.
+		 */
 		overflow: hidden;
-		/* Establish a container so the corner icon can size relative to the tile width. */
+
+		/*
+		 * Establish a container so the corner icon can size relative to the
+		 * tile width.
+		 */
 		container-type: inline-size;
 	}
 
@@ -278,7 +293,12 @@
 	&.has-theme-palette-7-color &__weather-media,
 	&.has-theme-palette-8-color &__weather-media,
 	&.has-theme-palette-9-color &__weather-media {
-		/* Soft near-black instead of pure #000: still high-contrast on the light tints, but matches the editorial feel of the rest of the card. */
+
+		/*
+		 * Soft near-black instead of pure #000: still high-contrast on the
+		 * light tints, but matches the editorial feel of the rest of the
+		 * card.
+		 */
 		color: #333;
 	}
 
@@ -366,7 +386,12 @@
 
 			dt {
 				margin: 0;
-				/* Labels (e.g. "Feels like") stay neutral so the row reads as label → value, regardless of the block's picked text colour. */
+
+				/*
+				 * Labels (e.g. "Feels like") stay neutral so the row reads
+				 * as label → value, regardless of the block's picked text
+				 * colour.
+				 */
 				color: var(--pwb-muted-color);
 				font-weight: 400;
 				display: inline-flex;
@@ -376,7 +401,11 @@
 
 			dd {
 				margin: 0;
-				/* Values are the meaningful payload of each row, so they follow the user's text-colour pick. */
+
+				/*
+				 * Values are the meaningful payload of each row, so they
+				 * follow the user's text-colour pick.
+				 */
 				color: var(--pwb-block-text, var(--pwb-text-color));
 				font-variant-numeric: tabular-nums;
 			}
@@ -386,7 +415,12 @@
 	&__weather-row-icon {
 		font-size: 16px;
 		line-height: 1;
-		/* Row icons follow the block's text-colour pick (same accent as the eyebrow/city/values); fall back to the design green when nothing is set. */
+
+		/*
+		 * Row icons follow the block's text-colour pick (same accent as
+		 * the eyebrow/city/values); fall back to the design green when
+		 * nothing is set.
+		 */
 		color: var(--pwb-block-text, var(--pwb-eyebrow-color));
 		flex: 0 0 auto;
 	}
